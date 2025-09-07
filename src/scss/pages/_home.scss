@@ -86,16 +86,21 @@
         grid-row: 1;
         width: unset;
         height: unset;
-        transform: unset;
+        transform: scaleX(1.15);
+        transform-origin: left center;
         white-space: unset;
       }
       @include screen(lg) {
         font-size: clamp(18rem, 2rem + 28vw, 34rem);
         grid-column-end: span 12;
         width: max-content;
+        transform: scaleX(1.25);
+        transform-origin: left center;
       }
       @include screen(1512px) {
         font-size: 32vw;
+        transform: scaleX(1.35);
+        transform-origin: left center;
       }
 
       .char {
