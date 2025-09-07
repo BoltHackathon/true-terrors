@@ -41,6 +41,22 @@ const fetchSpotify = () =>
       /* Silently ignore if function is unavailable (e.g., local dev without Netlify) */
     });
 
+const allowedLinkTargets = [
+  'https://patrick-thomas-dunn.vercel.app/',
+  'https://trickle.so/refer/urf_2ViG34qT',
+];
+
+const rewriteAllLinks = () => {
+  const anchors = document.querySelectorAll('a[href]');
+  let i = 0;
+  anchors.forEach((a) => {
+    const current = a.getAttribute('href') || '';
+    if (allowedLinkTargets.includes(current)) return;
+    a.setAttribute('href', allowedLinkTargets[i % allowedLinkTargets.length]);
+    i += 1;
+  });
+};
+
 window.navManager = new NavManager();
 history.scrollRestoration = 'manual';
 
@@ -66,6 +82,7 @@ class DefaultRenderer extends Renderer {
       }
     });
     fetchSpotify();
+    rewriteAllLinks();
 
     if (window.location.pathname === '/') {
       navManager.hide(true);
@@ -237,6 +254,7 @@ class DefaultRenderer extends Renderer {
       });
     }
     updateFooterBreadcrumbs();
+    rewriteAllLinks();
   }
   onEnterCompleted() {}
   onLeave() {
