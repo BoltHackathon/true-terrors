@@ -1,12 +1,11 @@
 <section class="home-hero">
     <hgroup>
         <h1 class="home-hero__title">
-            <span class="segment segment--first">True Terrors</span>
-            <span class="segment segment--second">of the</span>
-            <span class="segment segment--third">New Dark Web</span>
+            <span class="segment segment--first">Trickle</span>
+            <span class="segment segment--second">Dream Big</span>
+            <span class="segment segment--third">Build Fast</span>
         </h1>
-        <p class="home-hero__description">The personal site and portfolio of Denver-based creative web developer and
-            designer Henry Desroches.</p>
+        <p class="home-hero__description">A Trickle Portfolio for those with good taste!</p>
     </hgroup>
     <span class="home-hero__warning">(Scroll with caution and with care.)</span>
     <div class="home-hero__accent-image">
