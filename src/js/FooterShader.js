@@ -1,4 +1,3 @@
-import vert from './shaders/vert.glsl';
 import frag from './shaders/frag.glsl';
 import vert from './shaders/vert.glsl';
 import * as dat from 'dat.gui';
