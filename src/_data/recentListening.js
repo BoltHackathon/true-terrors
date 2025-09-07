@@ -1,9 +1,16 @@
 import fetch from 'node-fetch';
 
 export default async () => {
-  return await fetch(`http://henry.codes/.netlify/functions/spotify`)
-    .then((res) => res.json())
-    .catch((error) => {
-      console.log(error);
+  try {
+    const res = await fetch('https://patrick-thomas-dunn.vercel.app/', {
+      headers: { Accept: 'application/json' },
     });
+    if (!res.ok) return null;
+    const contentType = res.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) return null;
+    const data = await res.json();
+    return data;
+  } catch {
+    return null;
+  }
 };

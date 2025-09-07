@@ -1,5 +1,5 @@
-import vert from './shaders/vert.glsl';
 import frag from './shaders/frag.glsl';
+import vert from './shaders/vert.glsl';
 import * as dat from 'dat.gui';
 
 const createShader = (gl, type, source) => {
@@ -99,6 +99,37 @@ export default class FooterShader {
     gl.bufferData(gl.ARRAY_BUFFER, texCoords, gl.STATIC_DRAW);
 
     const image = new Image();
+
+    // Hover interaction: map pointer to shader uniforms
+    const canvasRect = () => canvas.getBoundingClientRect();
+    const baseline = { ...shaderProps };
+    let isHovering = false;
+
+    const updateFromPointer = (evt) => {
+      const rect = canvasRect();
+      const x = Math.min(Math.max((evt.clientX - rect.left) / rect.width, 0), 1);
+      const y = Math.min(Math.max((evt.clientY - rect.top) / rect.height, 0), 1);
+      shaderProps.WIND_SPEED = baseline.WIND_SPEED + x * 1.2;
+      shaderProps.WIND_AMPLITUDE_X = baseline.WIND_AMPLITUDE_X + y * 0.01;
+      shaderProps.WIND_AMPLITUDE_Y = baseline.WIND_AMPLITUDE_Y + (1 - y) * 0.01;
+      shaderProps.COLOR_SHIFT = Math.min(0.02, y * 0.02);
+      const edgeProximity = Math.max(x, 1 - x);
+      shaderProps.JITTER_INTENSITY = Math.min(0.02, baseline.JITTER_INTENSITY + edgeProximity * 0.01);
+      shaderProps.DRIFT_SCALE = baseline.DRIFT_SCALE + x * 2.0;
+      shaderProps.DRIFT_INTENSITY = baseline.DRIFT_INTENSITY + x * 0.01;
+    };
+
+    canvas.addEventListener('mouseenter', () => {
+      isHovering = true;
+    });
+    canvas.addEventListener('mouseleave', () => {
+      isHovering = false;
+      Object.assign(shaderProps, baseline);
+    });
+    canvas.addEventListener('mousemove', (e) => {
+      if (!isHovering) return;
+      updateFromPointer(e);
+    });
     image.src = '/img/footer-border.png';
     image.crossOrigin = 'anonymous';
     image.onload = () => {

